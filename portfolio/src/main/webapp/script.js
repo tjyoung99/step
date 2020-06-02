@@ -26,3 +26,14 @@ function addRandomGreeting() {
   const greetingContainer = document.getElementById('greeting-container');
   greetingContainer.innerText = greeting;
 }
+function addRandomQuote() {
+  const quotes =
+      ['wubbalubadubdub', 'I\'ll be back', 'Hakuna matata', 'This is sparta'];
+
+  // Pick a random greeting.
+  const quote = quotes[Math.floor(Math.random() * quotes.length)];
+
+  // Add it to the page.
+  const quoteContainer = document.getElementById('quote-container');
+  quoteContainer.innerText = quote;
+}
