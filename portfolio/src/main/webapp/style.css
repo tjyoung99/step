@@ -8,11 +8,9 @@
   margin-top: 20px;
 }
 
-
 #quote-container {
   margin-top: 20px;
 }
-
 
 #profile-pic {
     background-repeat: no-repeat;
@@ -23,7 +21,6 @@
     background-size: 100% 120%;
     float: left;
 }
-
 
 img {
     width: 200px;
