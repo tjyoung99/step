@@ -1,7 +1,11 @@
 #content {
   margin-left: auto;
   margin-right: auto;
-  width: 650px;
+  width: 60%;
+  border: 10px solid transparent;
+  padding: 10px;
+  border-image: url("images/galaxy.jpg") fill/ round;
+  border-image-width: 20%;
 }
 
 #greeting-container {
