@@ -37,3 +37,9 @@ function addRandomQuote() {
   const quoteContainer = document.getElementById('quote-container');
   quoteContainer.innerText = quote;
 }
+
+function getHelloTravis() {
+  fetch('/data').then(response => response.text()).then((greeting) => {
+    document.getElementById('content').innerText = greeting;
+  });
+}
