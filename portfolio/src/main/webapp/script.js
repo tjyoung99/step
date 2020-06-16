@@ -43,3 +43,9 @@ function getHelloTravis() {
     document.getElementById('content').innerText = greeting;
   });
 }
+
+function getMessageList() {
+  fetch('/data').then(response => response.json()).then((message) => {
+    document.getElementById('content').innerText = message;
+  });
+}
