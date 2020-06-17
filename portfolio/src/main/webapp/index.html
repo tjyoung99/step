@@ -6,12 +6,12 @@
     <link rel="stylesheet" href="style.css">
     <script src="script.js"></script>
   </head>
-  <body>
+  <body id="bottom-layer">
     <div id="content">
       <header>
-        <div id = "profile-pic"></div>
-        <h1>Travis Young's Portfolio</h1>
-        <nav>
+        <div id="profile-pic"></div>
+        <h1 class="g">Travis Young's Portfolio</h1>
+        <nav class="nav-bar">
           <a href="index.html">Home</a>
           <a href="resume.html">Resume</a>
           <a href="sports.html">My Sports</a>
@@ -22,12 +22,18 @@
           <a href="achievements.html">Achievements</a>
           <a href="/data">jserv</a>
         </nav>
-        <h2>About Me</h2>
+        <h2 class="o">About Me</h2>
       </header>
-      <p> Hello! Welcome to my portfolio.</p>
-      <p>My name is Travis Young. I am a third year, computer science major, at Tenessee State university. I am a first generation Jamaican American, born in Stone Mountain, Georgia. In this portfolio you will find a plethora of information about me from the previous sports I've played, to my career history.</p>
+      <p class="g"> Hello! Welcome to my portfolio.</p>
+      <p class="l">My name is Travis Young. I am a third year, computer science major, at 
+          Tenessee State university. I am a first generation Jamaican American, 
+          born in Stone Mountain, Georgia. In this portfolio you will find a 
+          plethora of information about me from the previous sports I've played 
+          to my career history.</p>
+      <button onclick="getHelloTravis()">Travis click</button>
+      <embed src="images/GTA 4.mp3" loop="false" autostart="false" width="20" 
+          height="20">
+      <div id="greeting-container"></div>
     </div>
-    <button onclick="getHelloTravis()">Travis click</button>
-    <embed src="images/GTA 4.mp3" loop="false" autostart="false" width="20" height="20">
   </body>
 </html>
