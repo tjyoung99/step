@@ -39,8 +39,10 @@ function addRandomQuote() {
 }
 
 function getHelloTravis() {
-  fetch('/data').then(response => response.text()).then((greeting) => {
-    document.getElementById('content').innerText = greeting;
+  fetch('/data').then(response => 
+  response.text()).then((greeting) => {
+    document.getElementById('greeting-container')
+    .innerHTML = greeting;
   });
 }
 
