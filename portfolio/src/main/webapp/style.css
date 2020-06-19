@@ -2,13 +2,56 @@
   margin-left: auto;
   margin-right: auto;
   width: 60%;
-  border: 10px solid transparent;
-  padding: 10px;
-  border-image: url("images/galaxy.jpg") fill/ round;
-  border-image-width: 20%;
 }
 
-#quote-container {
+.nav-bar{
+  overflow: hidden;
+  background-color: #FF3E30;
+}
+
+.nav-bar a {
+  float: left;
+  display: block;
+  color: #f2f2f2;
+  text-align: left;
+  padding: 2px 4px;
+  text-decoration: none;
+}
+
+.nav-bar a:hover {
+  background-color: rgb(221, 221, 221);
+  color: black;
+}
+
+.google-blue {
+  background-color: #176BEF;
+  color: #f2f2f2;
+}
+
+.google-red {
+  background-color: #FF3E30;
+  color: #f2f2f2;
+}
+
+.google-yellow {
+  background-color: #F7B529;
+  color: #f2f2f2;
+}
+
+.google-green {
+  background-color: #179C52;
+  color: #f2f2f2;
+}
+
+#bottom-layer {
+  background-image: url("images/galaxy.jpg");
+  background-repeat: no-repeat;
+  background-position: center;
+  background-attachment: fixed;
+  background-size: cover;
+}
+
+#greeting-container {
   margin-top: 20px;
 }
 
