@@ -38,10 +38,10 @@ function addRandomQuote() {
   quoteContainer.innerText = quote;
 }
 
-function getHelloTravis() {
+function getMessageList() {
   fetch('/data').then(response => 
-  response.text()).then((greeting) => {
-    document.getElementById('greeting-container')
-    .innerHTML = greeting;
-  });
+      response.json()).then((message) => {
+      document.getElementById('greeting-container')
+      .innerText = message;
+      });
 }
