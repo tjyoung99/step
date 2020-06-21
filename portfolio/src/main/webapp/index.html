@@ -24,7 +24,7 @@
         </nav>
         <h2 class="google-yellow">About Me</h2>
       </header>
-      <p class="google-blue"> Hello! Welcome to my portfolio.</p>
+      <p class="google-blue">Hello! Welcome to my portfolio.</p>
       <p class="google-green">My name is Travis Young. I am a third year,
            computer science major, at Tenessee State university. I am a first
            generation Jamaican American, born in Stone Mountain, Georgia. In
@@ -34,6 +34,12 @@
       <embed src="images/GTA 4.mp3" loop="false" autostart="false" width="20" 
           height="0">
       <div id="greeting-container"></div>
+      <p class="google-red">what else would you like too know about me</p>
+      <form action="/data" method="POST">
+      <input type="text" name="text-input"/>
+      <button onclick="getMessageList()">Submit</button>
+      <div id="greeting-container"></div>
+    </form>
     </div>
   </body>
 </html>

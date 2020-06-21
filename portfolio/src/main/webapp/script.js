@@ -28,7 +28,7 @@ function addRandomGreeting() {
 }
 function addRandomQuote() {
   const quotes =
-      ['wubbalubadubdub', 'I\'ll be back', 'Hakuna matata', 'This is sparta'];
+      ['wubbalubadubdub', 'I\'ll be back', 'Hakuna matata'];
 
   // Pick a random greeting.
   const quote = quotes[Math.floor(Math.random() * quotes.length)];
@@ -37,7 +37,14 @@ function addRandomQuote() {
   const quoteContainer = document.getElementById('quote-container');
   quoteContainer.innerText = quote;
 }
-
+function loadTasks() {
+  fetch('/data').then(response => response.json()).then((tasks) => {
+    const taskListElement = document.getElementById('task-list');
+    tasks.forEach((task) => {
+      taskListElement.appendChild(createTaskElement(task));
+    })
+  });
+}
 function getMessageList() {
   fetch('/data').then(response => 
       response.json()).then((message) => {
@@ -45,3 +52,4 @@ function getMessageList() {
       .innerText = message;
       });
 }
+

@@ -26,20 +26,51 @@ import com.google.gson.Gson;
 @WebServlet("/data")
 public class DataServlet extends HttpServlet {
 
+  // ArrayList<String> messages = new ArrayList<String>();
+
+  // @Override
+  // public void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException {
+  //   String json = convertToJson(messages);
+  //   response.setContentType("application/json;");
+  //   response.getWriter().println(json);
+  // }
+
   @Override
-  public void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException {
-    ArrayList<String> messages = new ArrayList<String>(3);
-    messages.add("message 1");
-    messages.add("message 2");
-    messages.add("message 3");
-    String json = convertToJson(messages);
-    response.setContentType("application/json;");
-    response.getWriter().println(json);
+  public void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException {
+    // Get the input from the form.
+    messages = request.getParameter("text-input"));
+    long timestamp = System.currentTimeMillis();
+
+    Entity taskEntity = new Entity("Task");
+    taskEntity.setProperty("text-input", messages);
+    taskEntity.setProperty("timestamp", timestamp);
+
+    DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
+    datastore.put(taskEntity);
+
+    response.sendRedirect("/index.html");
   }
 
-  private String convertToJson(ArrayList<String> listOfMessages) {
+  @Override
+  public void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException {
+    Query query = new Query("Task").addSort("timestamp", SortDirection.DESCENDING);
+
+    DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
+    PreparedQuery results = datastore.prepare(query);
+
+    List<Task> tasks = new ArrayList<>();
+    for (Entity entity : results.asIterable()) {
+      long id = entity.getKey().getId();
+      String message = (String) entity.getProperty("text-input");
+      long timestamp = (long) entity.getProperty("timestamp");
+
+      Task task = new Task(id, message, timestamp);
+      tasks.add(task);
+    }
+
     Gson gson = new Gson();
-    String json = gson.toJson(listOfMessages);
-    return json;
+
+    response.setContentType("application/json;");
+    response.getWriter().println(gson.toJson(tasks));
   }
 }
