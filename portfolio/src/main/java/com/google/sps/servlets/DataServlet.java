@@ -14,6 +14,12 @@
 
 package com.google.sps.servlets;
 
+import com.google.appengine.api.datastore.DatastoreService;
+import com.google.appengine.api.datastore.DatastoreServiceFactory;
+import com.google.appengine.api.datastore.Entity;
+import com.google.appengine.api.datastore.PreparedQuery;
+import com.google.appengine.api.datastore.Query;
+import com.google.appengine.api.datastore.Query.SortDirection;
 import java.io.IOException;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
@@ -21,56 +27,53 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.util.ArrayList;
 import com.google.gson.Gson;
+import java.util.Date; 
+import java.text.SimpleDateFormat;  
 
-/** Servlet that returns some example content. TODO: modify this file to handle comments data */
+/** Servlet that handles comments data */
 @WebServlet("/data")
 public class DataServlet extends HttpServlet {
 
-  // ArrayList<String> messages = new ArrayList<String>();
-
-  // @Override
-  // public void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException {
-  //   String json = convertToJson(messages);
-  //   response.setContentType("application/json;");
-  //   response.getWriter().println(json);
-  // }
-
   @Override
-  public void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException {
-    // Get the input from the form.
-    messages = request.getParameter("text-input"));
-    long timestamp = System.currentTimeMillis();
-
-    Entity taskEntity = new Entity("Task");
-    taskEntity.setProperty("text-input", messages);
-    taskEntity.setProperty("timestamp", timestamp);
-
-    DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
-    datastore.put(taskEntity);
-
-    response.sendRedirect("/index.html");
-  }
-
-  @Override
-  public void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException {
-    Query query = new Query("Task").addSort("timestamp", SortDirection.DESCENDING);
+  public void doGet(HttpServletRequest request, HttpServletResponse response) 
+      throws IOException {
+    Query query = new Query("Comments").addSort("timestamp",    
+        SortDirection.DESCENDING);
 
     DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
     PreparedQuery results = datastore.prepare(query);
 
-    List<Task> tasks = new ArrayList<>();
+    ArrayList<String> comments = new ArrayList<String>();
     for (Entity entity : results.asIterable()) {
-      long id = entity.getKey().getId();
-      String message = (String) entity.getProperty("text-input");
+      String comment = (String) entity.getProperty("user-comment");
       long timestamp = (long) entity.getProperty("timestamp");
-
-      Task task = new Task(id, message, timestamp);
-      tasks.add(task);
+      Date date = new Date(timestamp);
+      SimpleDateFormat formatter = new SimpleDateFormat("dd MMMM yyyy hh:mm");  
+      String strDate = formatter.format(date);  
+      String user = (String) entity.getProperty("user");
+      String commentWithTime = String.format("%s%nPosted by %s at %s",
+          comment, user, strDate);
+      comments.add(commentWithTime);
     }
-
     Gson gson = new Gson();
-
     response.setContentType("application/json;");
-    response.getWriter().println(gson.toJson(tasks));
+    response.getWriter().println(gson.toJson(comments));
+  }
+
+  @Override
+  public void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException {
+    String comment = request.getParameter("user-comment");
+    long timestamp = System.currentTimeMillis();
+    String user = request.getParameter("user");
+
+    Entity taskEntity = new Entity("Comments");
+    taskEntity.setProperty("user-comment", comment);
+    taskEntity.setProperty("timestamp", timestamp);
+    taskEntity.setProperty("user", user);
+
+    DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
+    datastore.put(taskEntity);
+   
+    response.sendRedirect("/index.html");
   }
 }

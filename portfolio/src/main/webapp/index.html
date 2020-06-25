@@ -6,7 +6,7 @@
     <link rel="stylesheet" href="style.css">
     <script src="script.js"></script>
   </head>
-  <body id="bottom-layer">
+  <body onload="loadComments()" id="bottom-layer">
     <div id="content">
       <header>
         <div id="profile-pic"></div>
@@ -30,16 +30,20 @@
            generation Jamaican American, born in Stone Mountain, Georgia. In
            this portfolio you will find a plethora of information about me from
            the previous sports I've played to my career history.</p>
-      <button onclick="getMessageList()">Travis click</button>
       <embed src="images/GTA 4.mp3" loop="false" autostart="false" width="20" 
           height="0">
-      <div id="greeting-container"></div>
-      <p class="google-red">what else would you like too know about me</p>
-      <form action="/data" method="POST">
-      <input type="text" name="text-input"/>
-      <button onclick="getMessageList()">Submit</button>
-      <div id="greeting-container"></div>
-    </form>
+      <div class="google-red">
+        <form action="/data" method="POST">
+          <p>what else would you like too know about me</p>
+          <label for="user">Username</label>
+          <input type="text" name="user">
+          <label for="user-comment">Topic</label>
+          <input type="text" name="user-comment"/>
+          <br/><br/>
+          <input type="submit" />
+        </form>
+        <ul  id="comment-history"></ul>
+      </div>
     </div>
   </body>
 </html>
