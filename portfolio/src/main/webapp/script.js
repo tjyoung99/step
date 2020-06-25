@@ -14,11 +14,10 @@
 
 function loadComments() {
   fetch('/data').then(response => response.json()).then((comments) => {
-    const commentHist = document.getElementById('comment-history');
+    const commentHistory = document.getElementById('comment-history');
     comments.forEach((comment)=> {
-      commentHist.appendChild(createListElement(comment));
+      commentHistory.appendChild(createListElement(comment));
     })
-    console.log(comments)
   });
 }
 
