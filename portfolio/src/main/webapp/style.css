@@ -4,10 +4,6 @@
   width: 60%;
 }
 
-#task-list {
-  list-style-type: none;
-}
-
 .nav-bar{
   overflow: hidden;
   background-color: #FF3E30;
