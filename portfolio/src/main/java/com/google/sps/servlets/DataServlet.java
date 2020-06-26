@@ -28,7 +28,8 @@ import javax.servlet.http.HttpServletResponse;
 import java.util.ArrayList;
 import com.google.gson.Gson;
 import java.util.Date; 
-import java.text.SimpleDateFormat;  
+import java.text.SimpleDateFormat;
+import java.util.TimeZone;  
 
 /** Servlet that handles comments data. */
 @WebServlet("/data")
@@ -42,19 +43,23 @@ public class DataServlet extends HttpServlet {
 
     DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
     PreparedQuery results = datastore.prepare(query);
-
+    
+    Date date = new Date();
     ArrayList<String> comments = new ArrayList<String>();
+    SimpleDateFormat formatter = new SimpleDateFormat("dd MMMM yyyy hh:mm");
+    formatter.setTimeZone(TimeZone.getTimeZone("America/New_York"));
+
     for (Entity entity : results.asIterable()) {
       String comment = (String) entity.getProperty("user-comment");
-      long timestamp = (long) entity.getProperty("timestamp");
-      Date date = new Date(timestamp);
-      SimpleDateFormat formatter = new SimpleDateFormat("dd MMMM yyyy hh:mm");  
-      String strDate = formatter.format(date);  
       String user = (String) entity.getProperty("user");
-      String commentWithTime = String.format("%s%nPosted by %s at %s",
+      long timestamp = (long) entity.getProperty("timestamp");
+      date.setTime(timestamp);
+      String strDate = formatter.format(date);  
+      String commentWithTime = String.format("\"%s\"%nPosted by %s at %s",
           comment, user, strDate);
       comments.add(commentWithTime);
     }
+
     Gson gson = new Gson();
     response.setContentType("application/json;");
     response.getWriter().println(gson.toJson(comments));
