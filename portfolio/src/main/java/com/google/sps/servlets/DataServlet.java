@@ -20,16 +20,16 @@ import com.google.appengine.api.datastore.Entity;
 import com.google.appengine.api.datastore.PreparedQuery;
 import com.google.appengine.api.datastore.Query;
 import com.google.appengine.api.datastore.Query.SortDirection;
+import com.google.gson.Gson;
 import java.io.IOException;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.TimeZone;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import java.util.ArrayList;
-import com.google.gson.Gson;
-import java.util.Date; 
-import java.text.SimpleDateFormat;
-import java.util.TimeZone;  
 
 /** Servlet that handles comments data. */
 @WebServlet("/data")
@@ -38,15 +38,16 @@ public class DataServlet extends HttpServlet {
   @Override
   public void doGet(HttpServletRequest request, HttpServletResponse response) 
       throws IOException {
-    Query query = new Query("Comments").addSort("timestamp",    
-        SortDirection.DESCENDING);
+    Query query = 
+        new Query("Comments").addSort("timestamp", SortDirection.DESCENDING);
 
     DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
     PreparedQuery results = datastore.prepare(query);
     
     Date date = new Date();
     ArrayList<String> comments = new ArrayList<String>();
-    SimpleDateFormat formatter = new SimpleDateFormat("dd MMMM yyyy hh:mm");
+    SimpleDateFormat formatter = 
+        new SimpleDateFormat("MMM, d ''yy 'at' hh:mm a");
     formatter.setTimeZone(TimeZone.getTimeZone("America/New_York"));
 
     for (Entity entity : results.asIterable()) {
@@ -55,8 +56,8 @@ public class DataServlet extends HttpServlet {
       long timestamp = (long) entity.getProperty("timestamp");
       date.setTime(timestamp);
       String strDate = formatter.format(date);  
-      String commentWithTime = String.format("\"%s\"%nPosted by %s at %s",
-          comment, user, strDate);
+      String commentWithTime = 
+          String.format("\"%s\"%nPosted by %s on %s", comment, user, strDate);
       comments.add(commentWithTime);
     }
 
