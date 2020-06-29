@@ -12,36 +12,17 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-/**
- * Adds a random greeting to the page.
- */
-function addRandomGreeting() {
-  const greetings =
-      ['Hello world!', '¡Hola Mundo!', '你好，世界！', 'Bonjour le monde!'];
-
-  // Pick a random greeting.
-  const greeting = greetings[Math.floor(Math.random() * greetings.length)];
-
-  // Add it to the page.
-  const greetingContainer = document.getElementById('greeting-container');
-  greetingContainer.innerText = greeting;
-}
-function addRandomQuote() {
-  const quotes =
-      ['wubbalubadubdub', 'I\'ll be back', 'Hakuna matata', 'This is sparta'];
-
-  // Pick a random greeting.
-  const quote = quotes[Math.floor(Math.random() * quotes.length)];
-
-  // Add it to the page.
-  const quoteContainer = document.getElementById('quote-container');
-  quoteContainer.innerText = quote;
+function loadComments() {
+  fetch('/data').then(response => response.json()).then((comments) => {
+    const commentHistory = document.getElementById('comment-history');
+    comments.forEach((comment)=> {
+      commentHistory.appendChild(createListElement(comment));
+    })
+  });
 }
 
-function getMessageList() {
-  fetch('/data').then(response => 
-      response.json()).then((message) => {
-      document.getElementById('greeting-container')
-      .innerText = message;
-      });
+function createListElement(text) {
+  const liElement = document.createElement('li');
+  liElement.innerText = text;
+  return liElement;
 }
