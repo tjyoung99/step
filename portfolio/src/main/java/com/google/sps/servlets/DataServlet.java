@@ -20,6 +20,8 @@ import com.google.appengine.api.datastore.Entity;
 import com.google.appengine.api.datastore.PreparedQuery;
 import com.google.appengine.api.datastore.Query;
 import com.google.appengine.api.datastore.Query.SortDirection;
+import com.google.appengine.api.users.UserService;
+import com.google.appengine.api.users.UserServiceFactory;
 import com.google.gson.Gson;
 import java.io.IOException;
 import java.text.SimpleDateFormat;
@@ -38,28 +40,28 @@ public class DataServlet extends HttpServlet {
   @Override
   public void doGet(HttpServletRequest request, HttpServletResponse response) 
       throws IOException {
-    Query query = 
-        new Query("Comments").addSort("timestamp", SortDirection.DESCENDING);
+      Query query = 
+          new Query("Comments").addSort("timestamp", SortDirection.DESCENDING);
+      DatastoreService datastore = 
+          DatastoreServiceFactory.getDatastoreService();
+      PreparedQuery results = datastore.prepare(query);
+      
+      Date date = new Date();
+      ArrayList<String> comments = new ArrayList<String>();
+      SimpleDateFormat formatter = 
+          new SimpleDateFormat("MMM, d ''yy 'at' hh:mm a");
+      formatter.setTimeZone(TimeZone.getTimeZone("America/New_York"));
 
-    DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
-    PreparedQuery results = datastore.prepare(query);
-    
-    Date date = new Date();
-    ArrayList<String> comments = new ArrayList<String>();
-    SimpleDateFormat formatter = 
-        new SimpleDateFormat("MMM, d ''yy 'at' hh:mm a");
-    formatter.setTimeZone(TimeZone.getTimeZone("America/New_York"));
-
-    for (Entity entity : results.asIterable()) {
-      String comment = (String) entity.getProperty("user-comment");
-      String user = (String) entity.getProperty("user");
-      long timestamp = (long) entity.getProperty("timestamp");
-      date.setTime(timestamp);
-      String strDate = formatter.format(date);  
-      String commentWithTime = 
-          String.format("\"%s\"%nPosted by %s on %s", comment, user, strDate);
-      comments.add(commentWithTime);
-    }
+      for (Entity entity : results.asIterable()) {
+        String comment = (String) entity.getProperty("user-comment");
+        String user = (String) entity.getProperty("user");
+        long timestamp = (long) entity.getProperty("timestamp");
+        date.setTime(timestamp);
+        String strDate = formatter.format(date);  
+        String commentWithTime = 
+            String.format("\"%s\"%nPosted by %s on %s", comment, user, strDate);
+        comments.add(commentWithTime);
+      }
 
     Gson gson = new Gson();
     response.setContentType("application/json;");
@@ -70,7 +72,9 @@ public class DataServlet extends HttpServlet {
   public void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException {
     String comment = request.getParameter("user-comment");
     long timestamp = System.currentTimeMillis();
-    String user = request.getParameter("user");
+
+    UserService userService = UserServiceFactory.getUserService();
+    String user = getUserNickname(userService.getCurrentUser().getUserId());
 
     Entity taskEntity = new Entity("Comments");
     taskEntity.setProperty("user-comment", comment);
@@ -80,6 +84,19 @@ public class DataServlet extends HttpServlet {
     DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
     datastore.put(taskEntity);
    
-    response.sendRedirect("/index.html");
+    response.sendRedirect("/comments.html");
+  }
+  private String getUserNickname(String id) {
+    DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
+    Query query =
+        new Query("UserInfo")
+            .setFilter(new Query.FilterPredicate("id", Query.FilterOperator.EQUAL, id));
+    PreparedQuery results = datastore.prepare(query);
+    Entity entity = results.asSingleEntity();
+    if (entity == null) {
+      return "";
+    }
+    String nickname = (String) entity.getProperty("nickname");
+    return nickname;
   }
 }

@@ -6,7 +6,7 @@
     <link rel="stylesheet" href="style.css">
     <script src="script.js"></script>
   </head>
-  <body onload="loadComments()" id="bottom-layer">
+  <body id="bottom-layer">
     <div id="content">
       <header>
         <div id="profile-pic"></div>
@@ -20,7 +20,7 @@
           <a href="job_history.html">Job History</a>
           <a href="fun_facts.html">Fun Facts</a>
           <a href="achievements.html">Achievements</a>
-          <a href="/data">jserv</a>
+          <a href="/Login">Comment Forum</a>
         </nav>
         <h2 class="google-yellow">About Me</h2>
       </header>
@@ -32,18 +32,6 @@
            the previous sports I've played to my career history.</p>
       <embed src="images/GTA 4.mp3" loop="false" autostart="false" width="20" 
           height="0">
-      <div class="google-red">
-        <form action="/data" method="POST">
-          <p>What else would you like too know about me?</p>
-          <label for="user">Username</label>
-          <input type="text" name="user">
-          <label for="user-comment">Topic</label>
-          <input type="text" name="user-comment"/>
-          <br/><br/>
-          <input type="submit" />
-        </form>
-        <ul id="comment-history"></ul>
-      </div>
     </div>
   </body>
 </html>
