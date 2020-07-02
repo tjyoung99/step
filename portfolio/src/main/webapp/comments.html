@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<meta charset="utf-8">
+<html>
+  <head>
+    <title>My Portfolio</title>
+    <link rel="stylesheet" href="style.css">
+    <script src="script.js"></script>
+  </head>
+  <body onload="loadComments()" id="bottom-layer">
+    <div id="content">
+      <header>
+        <div id="profile-pic"></div>
+        <h1 class="google-blue">Travis Young's Portfolio</h1>
+        <nav class="nav-bar">
+          <a href="index.html">Home</a>
+          <a href="resume.html">Resume</a>
+          <a href="sports.html">My Sports</a>
+          <a href="performances.html">Performances</a>
+          <a href="career.html">Career</a>
+          <a href="job_history.html">Job History</a>
+          <a href="fun_facts.html">Fun Facts</a>
+          <a href="achievements.html">Achievements</a>
+          <a href="/Login">Comment Forum</a>
+        </nav>
+        <h2 class="google-yellow">Comment Forum</h2>
+      </header>  
+      <div class="google-red">
+        <form action="/data" method="POST">
+          <p>What else would you like too know about me?</p>
+          <label for="user-comment">Topic</label>
+          <input type="text" name="user-comment"/>
+          <br/><br/>
+          <input type="submit" />
+        </form>
+        <ul id="comment-history"></ul>
+        <form action="/Login" method="POST">
+          <button type="submit" name="logout-button">Logout</button>
+        </form>
+        <p>change nickname <a href="/nickname">here</a></p>
+      </div>
+    </div>  
+  </body>
+</html>
