@@ -24,11 +24,13 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+/** Servlet that handles login function. */
 @WebServlet("/Login")
 public class LoginServlet extends HttpServlet {
 
   @Override
-  public void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException {
+  public void doGet(HttpServletRequest request, HttpServletResponse response) 
+      throws IOException {
     UserService userService = UserServiceFactory.getUserService();
 
     // If user is not logged in, show a login form (could also redirect to a login page)
@@ -45,10 +47,11 @@ public class LoginServlet extends HttpServlet {
       return;
     }
     response.sendRedirect("/comments.html");
-    // User is logged in and has a nickname, so the request can proceed
   }
-   @Override
-  public void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException {
+
+  @Override
+  public void doPost(HttpServletRequest request, HttpServletResponse response) 
+      throws IOException {
     UserService userService = UserServiceFactory.getUserService();
     String logout = request.getParameter("logout-button");
     if (logout != null){
@@ -62,7 +65,8 @@ public class LoginServlet extends HttpServlet {
     DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
     Query query =
         new Query("UserInfo")
-            .setFilter(new Query.FilterPredicate("id", Query.FilterOperator.EQUAL, id));
+        .setFilter(new Query
+        .FilterPredicate("id", Query.FilterOperator.EQUAL, id));
     PreparedQuery results = datastore.prepare(query);
     Entity entity = results.asSingleEntity();
     if (entity == null) {

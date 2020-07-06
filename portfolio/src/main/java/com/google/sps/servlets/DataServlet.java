@@ -40,28 +40,28 @@ public class DataServlet extends HttpServlet {
   @Override
   public void doGet(HttpServletRequest request, HttpServletResponse response) 
       throws IOException {
-      Query query = 
-          new Query("Comments").addSort("timestamp", SortDirection.DESCENDING);
-      DatastoreService datastore = 
-          DatastoreServiceFactory.getDatastoreService();
-      PreparedQuery results = datastore.prepare(query);
-      
-      Date date = new Date();
-      ArrayList<String> comments = new ArrayList<String>();
-      SimpleDateFormat formatter = 
-          new SimpleDateFormat("MMM, d ''yy 'at' hh:mm a");
-      formatter.setTimeZone(TimeZone.getTimeZone("America/New_York"));
+    Query query = 
+        new Query("Comments").addSort("timestamp", SortDirection.DESCENDING);
+    DatastoreService datastore = 
+        DatastoreServiceFactory.getDatastoreService();
+    PreparedQuery results = datastore.prepare(query);
+    
+    Date date = new Date();
+    ArrayList<String> comments = new ArrayList<String>();
+    SimpleDateFormat formatter = 
+        new SimpleDateFormat("MMM, d ''yy 'at' hh:mm a");
+    formatter.setTimeZone(TimeZone.getTimeZone("America/New_York"));
 
-      for (Entity entity : results.asIterable()) {
-        String comment = (String) entity.getProperty("user-comment");
-        String user = (String) entity.getProperty("user");
-        long timestamp = (long) entity.getProperty("timestamp");
-        date.setTime(timestamp);
-        String strDate = formatter.format(date);  
-        String commentWithTime = 
-            String.format("\"%s\"%nPosted by %s on %s", comment, user, strDate);
-        comments.add(commentWithTime);
-      }
+    for (Entity entity : results.asIterable()) {
+      String comment = (String) entity.getProperty("user-comment");
+      String user = (String) entity.getProperty("user");
+      long timestamp = (long) entity.getProperty("timestamp");
+      date.setTime(timestamp);
+      String strDate = formatter.format(date);  
+      String commentWithTime = 
+          String.format("\"%s\"%nPosted by %s on %s", comment, user, strDate);
+      comments.add(commentWithTime);
+    }
 
     Gson gson = new Gson();
     response.setContentType("application/json;");
@@ -69,7 +69,8 @@ public class DataServlet extends HttpServlet {
   }
 
   @Override
-  public void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException {
+  public void doPost(HttpServletRequest request, HttpServletResponse response) 
+      throws IOException {
     String comment = request.getParameter("user-comment");
     long timestamp = System.currentTimeMillis();
 
@@ -83,19 +84,21 @@ public class DataServlet extends HttpServlet {
 
     DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
     datastore.put(taskEntity);
-   
     response.sendRedirect("/comments.html");
   }
+
   private String getUserNickname(String id) {
     DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
     Query query =
         new Query("UserInfo")
-            .setFilter(new Query.FilterPredicate("id", Query.FilterOperator.EQUAL, id));
+        .setFilter(new Query.FilterPredicate("id", 
+        Query.FilterOperator.EQUAL, id));
     PreparedQuery results = datastore.prepare(query);
     Entity entity = results.asSingleEntity();
     if (entity == null) {
       return "";
     }
+    
     String nickname = (String) entity.getProperty("nickname");
     return nickname;
   }
