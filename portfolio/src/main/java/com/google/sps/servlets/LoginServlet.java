@@ -17,6 +17,7 @@ package com.google.sps.servlets;
 import com.google.appengine.api.datastore.*;
 import com.google.appengine.api.users.UserService;
 import com.google.appengine.api.users.UserServiceFactory;
+import com.google.sps.Util.GetNickname;
 import java.io.IOException;
 import java.io.PrintWriter;
 import javax.servlet.annotation.WebServlet;
@@ -41,7 +42,9 @@ public class LoginServlet extends HttpServlet {
     }
 
     // If user has not set a nickname, redirect to nickname page
-    String nickname = getUserNickname(userService.getCurrentUser().getUserId());
+    GetNickname getNickname = new GetNickname();
+    String nickname = 
+        getNickname.getUserNickname(userService.getCurrentUser().getUserId());
     if (nickname == null) {
       response.sendRedirect("/nickname");
       return;
@@ -53,26 +56,7 @@ public class LoginServlet extends HttpServlet {
   public void doPost(HttpServletRequest request, HttpServletResponse response) 
       throws IOException {
     UserService userService = UserServiceFactory.getUserService();
-    String logout = request.getParameter("logout-button");
-    if (logout != null){
-      String logoutUrl = userService.createLogoutURL("/index.html");
-      response.sendRedirect(logoutUrl);
-    }
-  }
-
-  /** Returns the nickname of the user with id, or null if the user has not set a nickname. */
-  private String getUserNickname(String id) {
-    DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
-    Query query =
-        new Query("UserInfo")
-        .setFilter(new Query
-        .FilterPredicate("id", Query.FilterOperator.EQUAL, id));
-    PreparedQuery results = datastore.prepare(query);
-    Entity entity = results.asSingleEntity();
-    if (entity == null) {
-      return null;
-    }
-    String nickname = (String) entity.getProperty("nickname");
-    return nickname;
+    String logoutUrl = userService.createLogoutURL("/index.html");
+    response.sendRedirect(logoutUrl);
   }
 }

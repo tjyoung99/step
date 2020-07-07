@@ -23,6 +23,7 @@ import com.google.appengine.api.datastore.Query.SortDirection;
 import com.google.appengine.api.users.UserService;
 import com.google.appengine.api.users.UserServiceFactory;
 import com.google.gson.Gson;
+import com.google.sps.Util.GetNickname;
 import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -42,8 +43,7 @@ public class DataServlet extends HttpServlet {
       throws IOException {
     Query query = 
         new Query("Comments").addSort("timestamp", SortDirection.DESCENDING);
-    DatastoreService datastore = 
-        DatastoreServiceFactory.getDatastoreService();
+    DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
     PreparedQuery results = datastore.prepare(query);
     
     Date date = new Date();
@@ -75,7 +75,9 @@ public class DataServlet extends HttpServlet {
     long timestamp = System.currentTimeMillis();
 
     UserService userService = UserServiceFactory.getUserService();
-    String user = getUserNickname(userService.getCurrentUser().getUserId());
+    GetNickname getNickname = new GetNickname();
+    String user = 
+        getNickname.getUserNickname(userService.getCurrentUser().getUserId());
 
     Entity taskEntity = new Entity("Comments");
     taskEntity.setProperty("user-comment", comment);
@@ -85,21 +87,5 @@ public class DataServlet extends HttpServlet {
     DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
     datastore.put(taskEntity);
     response.sendRedirect("/comments.html");
-  }
-
-  private String getUserNickname(String id) {
-    DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
-    Query query =
-        new Query("UserInfo")
-        .setFilter(new Query.FilterPredicate("id", 
-        Query.FilterOperator.EQUAL, id));
-    PreparedQuery results = datastore.prepare(query);
-    Entity entity = results.asSingleEntity();
-    if (entity == null) {
-      return "";
-    }
-    
-    String nickname = (String) entity.getProperty("nickname");
-    return nickname;
   }
 }
