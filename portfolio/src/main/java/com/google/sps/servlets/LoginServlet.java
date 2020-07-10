@@ -42,7 +42,6 @@ public class LoginServlet extends HttpServlet {
     }
 
     // If user has not set a nickname, redirect to nickname page
-    GetNickname getNickname = new GetNickname();
     String nickname = 
         getNickname.getUserNickname(userService.getCurrentUser().getUserId());
     if (nickname == null) {

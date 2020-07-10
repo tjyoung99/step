@@ -75,7 +75,6 @@ public class DataServlet extends HttpServlet {
     long timestamp = System.currentTimeMillis();
 
     UserService userService = UserServiceFactory.getUserService();
-    GetNickname getNickname = new GetNickname();
     String user = 
         getNickname.getUserNickname(userService.getCurrentUser().getUserId());
 

@@ -42,7 +42,6 @@ public class NicknameServlet extends HttpServlet {
 
     UserService userService = UserServiceFactory.getUserService();
     if (userService.isUserLoggedIn()) {
-      GetNickname getNickname = new GetNickname();
       String nickname = 
           getNickname.getUserNickname(userService.getCurrentUser().getUserId());
       out.println("<p>Set your nickname here:</p>");
