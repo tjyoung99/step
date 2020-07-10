@@ -17,7 +17,7 @@ package com.google.sps.servlets;
 import com.google.appengine.api.datastore.*;
 import com.google.appengine.api.users.UserService;
 import com.google.appengine.api.users.UserServiceFactory;
-import com.google.sps.Util.GetNickname;
+import com.google.sps.util.NicknameUtil;
 import java.io.IOException;
 import java.io.PrintWriter;
 import javax.servlet.annotation.WebServlet;
@@ -43,7 +43,7 @@ public class LoginServlet extends HttpServlet {
 
     // If user has not set a nickname, redirect to nickname page
     String nickname = 
-        getNickname.getUserNickname(userService.getCurrentUser().getUserId());
+        NicknameUtil.getUserNickname(userService.getCurrentUser().getUserId());
     if (nickname == null) {
       response.sendRedirect("/nickname");
       return;

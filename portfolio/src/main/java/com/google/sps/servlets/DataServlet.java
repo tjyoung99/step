@@ -23,7 +23,7 @@ import com.google.appengine.api.datastore.Query.SortDirection;
 import com.google.appengine.api.users.UserService;
 import com.google.appengine.api.users.UserServiceFactory;
 import com.google.gson.Gson;
-import com.google.sps.Util.GetNickname;
+import com.google.sps.util.NicknameUtil;
 import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -76,7 +76,7 @@ public class DataServlet extends HttpServlet {
 
     UserService userService = UserServiceFactory.getUserService();
     String user = 
-        getNickname.getUserNickname(userService.getCurrentUser().getUserId());
+        NicknameUtil.getUserNickname(userService.getCurrentUser().getUserId());
 
     Entity taskEntity = new Entity("Comments");
     taskEntity.setProperty("user-comment", comment);
