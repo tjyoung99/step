@@ -10,10 +10,10 @@ import com.google.appengine.api.datastore.Query.FilterPredicate;
 
 /** Static utilities for checking user nicknames. */
 public class NicknameUtil {
- /** 
-  * Returns the nickname of the user with id, or empty String if the user has 
-  * not set a nickname.
-  */
+  /** 
+   * Returns the nickname of the user with id, or empty String if the user has 
+   * not set a nickname.
+   */
   public static String getUserNickname(String id) {
     DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
     Query query = new Query("UserInfo")
