@@ -8,7 +8,7 @@ import com.google.appengine.api.datastore.Query;
 import com.google.appengine.api.datastore.Query.FilterOperator;
 import com.google.appengine.api.datastore.Query.FilterPredicate;
 
-  /** Static utilities for checking user nicknames. */
+/** Static utilities for checking user nicknames. */
 public class NicknameUtil {
  /** 
   * Returns the nickname of the user with id, or empty String if the user has 
