@@ -6,7 +6,7 @@
     <link rel="stylesheet" href="style.css">
     <script src="script.js"></script>
   </head>
-  <body id="bottom-layer">
+  <body onload="loadComments()" id="bottom-layer">
     <div id="content">
       <header>
         <div id="profile-pic"></div>
@@ -22,16 +22,22 @@
           <a href="achievements.html">Achievements</a>
           <a href="/Login">Comment Forum</a>
         </nav>
-        <h2 class="google-yellow">About Me</h2>
-      </header>
-      <p class="google-blue">Hello! Welcome to my portfolio.</p>
-      <p class="google-green">My name is Travis Young. I am a third year,
-           computer science major, at Tenessee State university. I am a first
-           generation Jamaican American, born in Stone Mountain, Georgia. In
-           this portfolio you will find a plethora of information about me from
-           the previous sports I've played to my career history.</p>
-      <embed src="images/GTA 4.mp3" loop="false" autostart="false" width="20" 
-          height="0">
-    </div>
+        <h2 class="google-yellow">Comment Forum</h2>
+      </header>  
+      <div class="google-red">
+        <form action="/data" method="POST">
+          <p>What else would you like to know about me?</p>
+          <label for="user-comment">Topic</label>
+          <input type="text" name="user-comment"/>
+          <br/><br/>
+          <input type="submit" />
+        </form>
+        <ul id="comment-history"></ul>
+        <form action="/Login" method="POST">
+          <button type="submit" name="logout-button">Logout</button>
+        </form>
+        <p>change nickname <a href="/nickname">here</a></p>
+      </div>
+    </div>  
   </body>
 </html>

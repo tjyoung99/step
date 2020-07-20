@@ -20,7 +20,10 @@ import com.google.appengine.api.datastore.Entity;
 import com.google.appengine.api.datastore.PreparedQuery;
 import com.google.appengine.api.datastore.Query;
 import com.google.appengine.api.datastore.Query.SortDirection;
+import com.google.appengine.api.users.UserService;
+import com.google.appengine.api.users.UserServiceFactory;
 import com.google.gson.Gson;
+import com.google.sps.util.NicknameUtil;
 import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -40,7 +43,6 @@ public class DataServlet extends HttpServlet {
       throws IOException {
     Query query = 
         new Query("Comments").addSort("timestamp", SortDirection.DESCENDING);
-
     DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
     PreparedQuery results = datastore.prepare(query);
     
@@ -67,10 +69,14 @@ public class DataServlet extends HttpServlet {
   }
 
   @Override
-  public void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException {
+  public void doPost(HttpServletRequest request, HttpServletResponse response) 
+      throws IOException {
     String comment = request.getParameter("user-comment");
     long timestamp = System.currentTimeMillis();
-    String user = request.getParameter("user");
+
+    UserService userService = UserServiceFactory.getUserService();
+    String user = 
+        NicknameUtil.getUserNickname(userService.getCurrentUser().getUserId());
 
     Entity taskEntity = new Entity("Comments");
     taskEntity.setProperty("user-comment", comment);
@@ -79,7 +85,6 @@ public class DataServlet extends HttpServlet {
 
     DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
     datastore.put(taskEntity);
-   
-    response.sendRedirect("/index.html");
+    response.sendRedirect("/comments.html");
   }
 }
