@@ -34,73 +34,35 @@ public final class FindMeetingQuery {
     }
 
     if (events.isEmpty() || request.getAttendees().isEmpty() || 
-        !collectionContainsSet(request.getAttendees(), getAllAttendees(events))){
+        !(getAllAttendees(events).containsAll(request.getAttendees()))) {
       return Arrays.asList(TimeRange.WHOLE_DAY);
     }
 
-    List<TimeRange> RangesByStart = new ArrayList<TimeRange>(events.size());
+    List<TimeRange> rangesByStart = new ArrayList<TimeRange>(events.size());
     for (Event event : events){
-      RangesByStart.add(event.getWhen());
+      rangesByStart.add(event.getWhen());
     }
-    List<TimeRange> RangesByEnd = new ArrayList<TimeRange>(RangesByStart);
-    Collections.sort(RangesByStart, TimeRange.ORDER_BY_START);
-    Collections.sort(RangesByEnd, TimeRange.ORDER_BY_END);
+    List<TimeRange> rangesByEnd = new ArrayList<TimeRange>(rangesByStart);
+    Collections.sort(rangesByStart, TimeRange.ORDER_BY_START);
+    Collections.sort(rangesByEnd, TimeRange.ORDER_BY_END);
     
-    int length = RangesByStart.size();
+    int rangesLength = rangesByStart.size();
    
-    TimeRange requestableTime = TimeRange.fromStartEnd(TimeRange.START_OF_DAY, RangesByStart.get(0).start(), false);
-
-    if (requestableTime.duration() >= request.getDuration()) {
-      collectionOfRanges.add(requestableTime);
-    }
+    TimeRange requestableTime = 
+        TimeRange.fromStartEnd(TimeRange.START_OF_DAY, rangesByStart.get(0).start(), false);
+    addTimeRange(requestableTime, request, collectionOfRanges);
 
      requestableTime = 
-        TimeRange.fromStartEnd(RangesByEnd.get(length - 1).end(), TimeRange.END_OF_DAY, true);
-    if (requestableTime.duration() >= request.getDuration()) {
-      collectionOfRanges.add(requestableTime);
-    }
+        TimeRange.fromStartEnd(rangesByEnd.get(rangesLength - 1).end(), TimeRange.END_OF_DAY, true);
+    addTimeRange(requestableTime, request, collectionOfRanges);
 
-    TimeRange currentRange;
-    TimeRange nextRange;
-    List<TimeRange> overlappingRanges;
-    if (length > 1) {
-      for (int i = 0; i < length; i++) {
-        currentRange = RangesByStart.get(i);
-        if (i + 1 >= length) break;
-        nextRange = RangesByStart.get(i + 1);
-        if (currentRange.overlaps(nextRange)){
-          overlappingRanges = new ArrayList<TimeRange>(length);
-          int j = 0;
-          for (TimeRange range : RangesByStart) {
-            j++;
-            if (currentRange.overlaps(range)) {
-              overlappingRanges.add(range);
-            }
-          }
-          Collections.sort(overlappingRanges, TimeRange.ORDER_BY_END);
-          i = j;
-          if (i + 1 >= length) break;
-          nextRange = RangesByStart.get(i + 1);
-          TimeRange latestRange = overlappingRanges.get(0);
-          requestableTime = TimeRange.fromStartEnd(
-              latestRange.end(), 
-              nextRange.start(), 
-              false);
     
-          if (requestableTime.duration() >= request.getDuration()) {
-            collectionOfRanges.add(requestableTime);
-            continue;
-          }
-        } else {
-          requestableTime = TimeRange.fromStartEnd(
-              currentRange.end(), 
-              nextRange.start(), 
-              false);
-          if (requestableTime.duration() >= request.getDuration()) {
-            collectionOfRanges.add(requestableTime);
-          }   
-        }
-      }
+    if (rangesLength > 1) {
+      addAllOtherTimeRanges(rangesByStart, 
+                            requestableTime, 
+                            request, 
+                            collectionOfRanges, 
+                            rangesLength);
     }
     Collections.sort(collectionOfRanges, TimeRange.ORDER_BY_START);
     return collectionOfRanges;
@@ -114,12 +76,48 @@ public final class FindMeetingQuery {
     return allAttendees;
   }
 
-  public boolean collectionContainsSet(Collection<String> stringCollection, Set<String> stringSet) {
-    for (String strings: stringCollection) {
-      if (!(stringSet.contains(strings))){
-        return false;
-      } 
+  public void addTimeRange(TimeRange range, MeetingRequest request, List<TimeRange> listOfRanges){
+    if (range.duration() >= request.getDuration()) {
+      listOfRanges.add(range);
+    }  
+  }
+
+  public List<TimeRange> getOverlappingRanges(TimeRange currentRange, List<TimeRange> 
+      listOfRanges) {
+    List<TimeRange> overlappingRanges = new ArrayList<TimeRange>(listOfRanges.size());
+    for (TimeRange range : listOfRanges) {
+      if (currentRange.overlaps(range)) {
+        overlappingRanges.add(range);
+      }
     }
-    return true;
+    Collections.sort(overlappingRanges, TimeRange.ORDER_BY_END);
+    return overlappingRanges;
+  }
+  
+  public void addAllOtherTimeRanges(List<TimeRange> rangesByStart, TimeRange requestableTime, MeetingRequest request, List<TimeRange> collectionOfRanges, int rangesLength){
+    TimeRange currentRange;
+    TimeRange nextRange;
+    List<TimeRange> overlappingRanges;
+    for (int i = 0; i < rangesLength - 1; i++) {
+        currentRange = rangesByStart.get(i);
+        nextRange = rangesByStart.get(i + 1);
+        if (currentRange.overlaps(nextRange)){
+          overlappingRanges = getOverlappingRanges(currentRange, rangesByStart);
+          i = rangesByStart.indexOf(overlappingRanges.get(0));
+          if (i + 1 >= rangesLength) break;
+          nextRange = rangesByStart.get(i + 1);
+          TimeRange latestRange = overlappingRanges.get(0);
+          requestableTime = TimeRange.fromStartEnd(
+              latestRange.end(), 
+              nextRange.start(), 
+              false);
+        } else {
+          requestableTime = TimeRange.fromStartEnd(
+              currentRange.end(), 
+              nextRange.start(), 
+              false);
+        }
+        addTimeRange(requestableTime, request, collectionOfRanges); 
+      }
   }
 }
