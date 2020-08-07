@@ -65,11 +65,10 @@ public final class FindMeetingQuery {
   
   public boolean ifEventAttendeesNotRequested(Collection<Event> events, MeetingRequest request) {
     Set<String> allAttendees = new HashSet<String>();
-    Set<String> requestedAttendees = new HashSet<String>(request.getAttendees());
     for (Event event : events){
       allAttendees.addAll(event.getAttendees());
     }
-    return Collections.disjoint(allAttendees,requestedAttendees);
+    return Collections.disjoint(allAttendees,request.getAttendees());
   }
 
   public void addTimeRange(TimeRange range, MeetingRequest request, List<TimeRange> listOfRanges){
