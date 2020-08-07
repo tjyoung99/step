@@ -57,11 +57,7 @@ public final class FindMeetingQuery {
     addTimeRange(requestableTime, request, collectionOfRanges);
     
     if (rangesLength > 1) {
-      addAllOtherTimeRanges(rangesByStart, 
-                            requestableTime, 
-                            request, 
-                            collectionOfRanges, 
-                            rangesLength);
+      addAllOtherTimeRanges(rangesByStart, requestableTime, request, collectionOfRanges);
     }
     Collections.sort(collectionOfRanges, TimeRange.ORDER_BY_START);
     return collectionOfRanges;
@@ -73,10 +69,7 @@ public final class FindMeetingQuery {
     for (Event event : events){
       allAttendees.addAll(event.getAttendees());
     }
-    for (String attendee : requestedAttendees) {
-      if (allAttendees.contains(attendee)) return false;
-    }
-    return true;
+    return Collections.disjoint(allAttendees,requestedAttendees);
   }
 
   public void addTimeRange(TimeRange range, MeetingRequest request, List<TimeRange> listOfRanges){
@@ -97,29 +90,26 @@ public final class FindMeetingQuery {
     return overlappingRanges;
   }
   
-  public void addAllOtherTimeRanges(List<TimeRange> rangesByStart, 
-                                    TimeRange requestableTime, 
-                                    MeetingRequest request, 
-                                    List<TimeRange> collectionOfRanges, 
-                                    int rangesLength) {
+  public void addAllOtherTimeRanges(List<TimeRange> rangesByStart, TimeRange requestableTime, 
+      MeetingRequest request, List<TimeRange> collectionOfRanges) {
     TimeRange currentRange;
     TimeRange nextRange;
     List<TimeRange> overlappingRanges;
-    for (int i = 0; i < rangesLength - 1; i++) {
-        currentRange = rangesByStart.get(i);
+    for (int i = 0; i < rangesByStart.size() - 1; i++) {
+      currentRange = rangesByStart.get(i);
+      nextRange = rangesByStart.get(i + 1);
+      if (currentRange.overlaps(nextRange)) {
+        overlappingRanges = getOverlappingRanges(currentRange, rangesByStart);
+        i = rangesByStart.indexOf(overlappingRanges.get(0));
+        if (i + 1 >= rangesByStart.size()) break;
         nextRange = rangesByStart.get(i + 1);
-        if (currentRange.overlaps(nextRange)){
-          overlappingRanges = getOverlappingRanges(currentRange, rangesByStart);
-          i = rangesByStart.indexOf(overlappingRanges.get(0));
-          if (i + 1 >= rangesLength) break;
-          nextRange = rangesByStart.get(i + 1);
-          currentRange = overlappingRanges.get(0);
-        }
-        requestableTime = TimeRange.fromStartEnd(
-            currentRange.end(), 
-            nextRange.start(), 
-            false);
-        addTimeRange(requestableTime, request, collectionOfRanges); 
+        currentRange = overlappingRanges.get(0);
       }
+      requestableTime = TimeRange.fromStartEnd(
+          currentRange.end(), 
+          nextRange.start(), 
+          false);
+      addTimeRange(requestableTime, request, collectionOfRanges); 
+    }
   }
 }

@@ -295,9 +295,8 @@ public final class FindMeetingQueryTest {
   }
 
   @Test
-  public void somePeopleAre() {
-    // Add an event, but make the only attendee someone different from the person looking to book
-    // a meeting. This event should not affect the booking.
+  public void requestWithFreeAndBusyAttendees() {
+    // Check that query works given that some attendees are in events and some are not.
     Collection<Event> events = Arrays.asList(new Event("Event 1",
         TimeRange.fromStartDuration(TIME_0900AM, DURATION_30_MINUTES), Arrays.asList(PERSON_A)));
     MeetingRequest request = 
@@ -311,4 +310,3 @@ public final class FindMeetingQueryTest {
     Assert.assertEquals(expected, actual);
   }
 }
-
