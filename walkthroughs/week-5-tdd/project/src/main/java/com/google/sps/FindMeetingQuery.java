@@ -32,7 +32,7 @@ public final class FindMeetingQuery {
     }
 
     if (events.isEmpty() || request.getAttendees().isEmpty() || 
-        !(getAttendeesForAllEvents(events).containsAll(request.getAttendees()))) {
+        ifEventAttendeesNotRequested(events, request)) {
       return Arrays.asList(TimeRange.WHOLE_DAY);
     }
 
@@ -67,12 +67,16 @@ public final class FindMeetingQuery {
     return collectionOfRanges;
   }
   
-  public Set<String> getAttendeesForAllEvents(Collection<Event> events) {
+  public boolean ifEventAttendeesNotRequested(Collection<Event> events, MeetingRequest request) {
     Set<String> allAttendees = new HashSet<String>();
-    for (Event event: events){
+    Set<String> requestedAttendees = new HashSet<String>(request.getAttendees());
+    for (Event event : events){
       allAttendees.addAll(event.getAttendees());
     }
-    return allAttendees;
+    for (String attendee : requestedAttendees) {
+      if (allAttendees.contains(attendee)) return false;
+    }
+    return true;
   }
 
   public void addTimeRange(TimeRange range, MeetingRequest request, List<TimeRange> listOfRanges){
